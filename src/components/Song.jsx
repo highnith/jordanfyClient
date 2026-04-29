@@ -8,15 +8,14 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useContext } from "react";
+import { PlayerContext } from "../context/PlayerContext";
 
-export default function TrackItem({
-  item,
-  addToQueue,
-  handle_single_play,
-  showPopup,
-}) {
+export default function Song({ item }) {
+  const { addToQueue, showQueuePopup, handle_single_play } =
+    useContext(PlayerContext);
   const position = useSharedValue(0);
-  const roundBorder = useSharedValue(0)
+  const roundBorder = useSharedValue(0);
   const THRESHOLD = 100;
   const MAX_SWIPE = 130;
 
@@ -38,7 +37,7 @@ export default function TrackItem({
     .onEnd((e) => {
       if (e.translationX > THRESHOLD) {
         runOnJS(addToQueue)(item);
-        runOnJS(showPopup)();
+        runOnJS(showQueuePopup)();
       }
       roundBorder.value = withSpring(0);
       position.value = withTiming(0, { duration: 200 });
@@ -46,9 +45,11 @@ export default function TrackItem({
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: position.value }],
-    zIndex: 2,
+    zIndex:2,
+    overflow: "hidden",
     backgroundColor: "black",
     borderRadius: roundBorder.value,
+    width: "100%"
   }));
 
   return (
@@ -67,9 +68,21 @@ export default function TrackItem({
                 style={styles.song_image}
               />
             </View>
-            <View>
-              <Text style={styles.song_title}>{item.title}</Text>
-              <Text style={styles.song_author}>{item.channel}</Text>
+            <View style={styles.textContainer}>
+              <Text
+                style={styles.song_title}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {item.title}
+              </Text>
+              <Text
+                style={styles.song_author}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {item.channel}
+              </Text>
             </View>
           </Pressable>
         </Animated.View>
@@ -84,6 +97,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "green",
     justifyContent: "center",
+    width: "100%"
   },
   queueIcon: {
     position: "absolute",
@@ -94,15 +108,12 @@ const styles = StyleSheet.create({
     borderRadius: 13,
     height: 60,
     width: 60,
-    
-
   },
 
   song: {
     height: 70,
     flexDirection: "row",
     alignItems: "center",
-    
   },
   song_title: {
     paddingTop: 3,
@@ -118,4 +129,9 @@ const styles = StyleSheet.create({
     padding: 13,
   },
   box: { backgroundColor: "green" },
+  textContainer: {
+  flex: 1,
+  minWidth: 0, // 👈 FONDAMENTALE
+  paddingRight: 10,
+},
 });

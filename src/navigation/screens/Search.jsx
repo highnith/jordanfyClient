@@ -3,7 +3,8 @@ import { useState, useContext, useMemo, useCallback } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import debounce from "lodash.debounce";
 import { PlayerContext } from "../../context/PlayerContext";
-import TrackItem from "..//../components/TrackItem";
+import Song from "..//../components/Song";
+import QueuePopup from "..//../components/QueuePopup";
 import Player from "../../components/Player";
 
 
@@ -34,7 +35,7 @@ export function Search() {
     return { results, search };
   }
   const { results, search } = useSearch();
-
+  
   const show = () => {
     setShowPopup(true);
     setTimeout(() => setShowPopup(false), 1500);
@@ -44,11 +45,8 @@ export function Search() {
 
   return (
     <View style={styles.container}>
-      {showPopup && (
-        <View style={styles.popup}>
-          <Text style={{ color: "black" }}>Add to queue</Text>
-        </View>
-      )}
+      
+      <QueuePopup/>
       <View style={styles.searchBar}>
         <Ionicons
           name="search"
@@ -73,11 +71,8 @@ export function Search() {
         data={finresults}
         keyExtractor={(item, index) => item.id?.toString() || index.toString()}
         renderItem={({ item }) => (
-          <TrackItem
-            showPopup={show}
+          <Song
             item={item}
-            addToQueue={addToQueue}
-            handle_single_play={handle_single_play}
           />
         )}
       />

@@ -5,12 +5,20 @@ import {
   setAudioModeAsync,
 } from "expo-audio";
 
+import {
+  createPlaylist,
+  addSongToPlaylist,
+  removeSong,
+  getData
+} from "../storage/playlistStorage";
+
 export const PlayerContext = createContext(null);
 
 export function PlayerProvider({ children }) {
   const [track, setTrack] = useState(null);
   const [playerVisibility, setPlayerVisibility] = useState(false);
-  const [trackScreenActive, setTrackScreenActive] = useState(false)
+  const [trackScreenActive, setTrackScreenActive] = useState(false);
+  const [queuePopup, setQueuePopup] = useState(false);
   const queue = useRef([]);
 
   const BASE_URL = "https://web-production-d23a.up.railway.app";
@@ -23,13 +31,18 @@ export function PlayerProvider({ children }) {
     });
   }, []);
 
+  const showQueuePopup = () => {
+    setQueuePopup(true);
+    setTimeout(() => setQueuePopup(false), 1500);
+  };
+
   const player = useAudioPlayer();
   const playerStatus = useAudioPlayerStatus(player);
 
   const addToQueue = (newTrack) => {
-    if(queue.current.length === 0){
-        setTrack(newTrack);
-        setPlayerVisibility(true);
+    if (queue.current.length === 0) {
+      setTrack(newTrack);
+      setPlayerVisibility(true);
     }
     queue.current.push(newTrack);
     fetch(`${BASE_URL}/stream/${newTrack.id}`);
@@ -38,7 +51,6 @@ export function PlayerProvider({ children }) {
   const handle_single_play = (newTrack) => {
     queue.current = [newTrack];
     setTrack(newTrack);
-    
   };
 
   const moveForward = () => {
@@ -47,7 +59,6 @@ export function PlayerProvider({ children }) {
 
     if (nextTrack) {
       setTrack(nextTrack);
-     
     }
   };
 
@@ -60,7 +71,6 @@ export function PlayerProvider({ children }) {
 
       if (previousTrack) {
         setTrack(previousTrack);
-       
       }
     }
   };
@@ -93,7 +103,6 @@ export function PlayerProvider({ children }) {
 
       if (nextTrack) {
         setTrack(nextTrack);
-
       }
     }
   }, [playerStatus.didJustFinish]);
@@ -103,7 +112,7 @@ export function PlayerProvider({ children }) {
       value={{
         BASE_URL,
         trackScreenActive,
-         setTrackScreenActive,
+        setTrackScreenActive,
         addToQueue,
         moveForward,
         moveBackward,
@@ -114,6 +123,13 @@ export function PlayerProvider({ children }) {
         setTrack,
         playerVisibility,
         setPlayerVisibility,
+        createPlaylist,
+        addSongToPlaylist,
+        removeSong,
+        getData,
+        queuePopup,
+        showQueuePopup,
+        handle_single_play
       }}
     >
       {children}

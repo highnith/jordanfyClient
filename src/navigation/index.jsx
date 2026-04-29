@@ -14,7 +14,8 @@ import { Settings } from "./screens/Settings";
 import { Search } from "./screens/Search";
 import { NotFound } from "./screens/NotFound";
 import { Library } from "./screens/Library";
-import {TrackScreen} from "./screens/TrackScreen"
+import {TrackScreen} from "./screens/TrackScreen";
+import {Playlist} from "./screens/Playlist";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -24,7 +25,6 @@ const HomeTabs = createBottomTabNavigator({
     tabBarShowLabel: true,
     tabBarActiveTintColor: "white",
     tabBarBackground: () => (
-      // ← qui
       <LinearGradient
         colors={["rgba(0,0,0,0)", "rgba(0,0,0,0.6)"]}
         //locations={[0, 0.75]}
@@ -129,6 +129,12 @@ const RootStack = createNativeStackNavigator({
     },
     TrackScreen: {
       screen :TrackScreen,
+      options: {
+        headerShown: false
+      }
+    },
+    Playlist :{
+      screen :Playlist,
       options: {
         headerShown: false
       }
