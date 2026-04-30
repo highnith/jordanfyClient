@@ -3,12 +3,12 @@ import { PlayerContext } from "../context/PlayerContext";
 import { StyleSheet, View,  Text } from "react-native";
 
 export default function QueuePopup() {
-  const {queuePopup} = useContext(PlayerContext)
+  const {queuePopup,popupMessage} = useContext(PlayerContext)
   return (
     <>
       {queuePopup && (
         <View style={styles.popup}>
-          <Text style={{ color: "black" }}>Add to queue</Text>
+          <Text style={{ color: "black" }}>{popupMessage}</Text>
         </View>
       )}
     </>

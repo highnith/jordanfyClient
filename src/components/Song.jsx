@@ -12,12 +12,16 @@ import { useContext } from "react";
 import { PlayerContext } from "../context/PlayerContext";
 
 export default function Song({ item }) {
-  const { addToQueue, showQueuePopup, handle_single_play } =
+  const { addToQueue, showQueuePopup, handle_single_play, removeSong } =
     useContext(PlayerContext);
   const position = useSharedValue(0);
   const roundBorder = useSharedValue(0);
   const THRESHOLD = 100;
   const MAX_SWIPE = 130;
+
+  const handleRemoveSong = (track) => {
+    removeSong("favourites", track.id);
+  };
 
   const panGesture = Gesture.Pan()
     .activeOffsetX([-20, 20])
@@ -32,12 +36,23 @@ export default function Song({ item }) {
           const overflow = e.translationX - MAX_SWIPE;
           position.value = MAX_SWIPE + overflow * 0.2;
         }
+      } else if (e.translationX < 0) {
+        roundBorder.value = withSpring(10);
+        if (Math.abs(e.translationX) <= MAX_SWIPE) {
+          position.value = e.translationX;
+        } else {
+          const overflow = Math.abs(e.translationX) - MAX_SWIPE;
+          position.value = -(MAX_SWIPE + overflow * 0.2);
+        }
       }
     })
     .onEnd((e) => {
       if (e.translationX > THRESHOLD) {
         runOnJS(addToQueue)(item);
-        runOnJS(showQueuePopup)();
+        runOnJS(showQueuePopup)("Added to queue");
+      } else if (e.translationX < -THRESHOLD) {
+        runOnJS(showQueuePopup)("Removed from favourites");
+        runOnJS(handleRemoveSong)(item);
       }
       roundBorder.value = withSpring(0);
       position.value = withTiming(0, { duration: 200 });
@@ -45,11 +60,11 @@ export default function Song({ item }) {
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: position.value }],
-    zIndex:2,
+    zIndex: 2,
     overflow: "hidden",
     backgroundColor: "black",
     borderRadius: roundBorder.value,
-    width: "100%"
+    width: "100%",
   }));
 
   return (
@@ -86,8 +101,15 @@ export default function Song({ item }) {
             </View>
           </Pressable>
         </Animated.View>
-        <View style={styles.queueIcon}>
-          <MaterialIcons name="queue-music" size={50} color="white" />
+        <View style={{ width: "50%", backgroundColor: "green",position: "absolute", left: 0,zIndex:1,height:"100%"}}>
+          <View style={styles.queueIconAdd}>
+            <MaterialIcons name="queue-music" size={50} color="white" />
+          </View>
+        </View>
+        <View style={{ width: "50%", backgroundColor: "red" ,position: "absolute",right: 0,zIndex:1,height:"100%"}}>
+          <View style={styles.queueIconRemove}>
+            <MaterialIcons name="delete-forever" size={50} color="white" />
+          </View>
         </View>
       </View>
     </GestureDetector>
@@ -95,14 +117,24 @@ export default function Song({ item }) {
 }
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "green",
     justifyContent: "center",
-    width: "100%"
+     flexDirection: "row",
+
+    width: "100%",
   },
-  queueIcon: {
+  queueIconAdd: {
+    height:"100%",
     position: "absolute",
     left: 50,
     alignItems: "center",
+    justifyContent:"center"
+  },
+  queueIconRemove: {
+    height:"100%",
+    position: "absolute",
+    right: 50,
+    alignItems: "center",
+    justifyContent:"center"
   },
   song_image: {
     borderRadius: 13,
@@ -130,8 +162,8 @@ const styles = StyleSheet.create({
   },
   box: { backgroundColor: "green" },
   textContainer: {
-  flex: 1,
-  minWidth: 0, // 👈 FONDAMENTALE
-  paddingRight: 10,
-},
+    flex: 1,
+    minWidth: 0, // 👈 FONDAMENTALE
+    paddingRight: 10,
+  },
 });

@@ -19,6 +19,7 @@ export function PlayerProvider({ children }) {
   const [playerVisibility, setPlayerVisibility] = useState(false);
   const [trackScreenActive, setTrackScreenActive] = useState(false);
   const [queuePopup, setQueuePopup] = useState(false);
+  const [popupMessage,setPopupMessage] = useState();
   const queue = useRef([]);
 
   const BASE_URL = "https://web-production-d23a.up.railway.app";
@@ -31,7 +32,8 @@ export function PlayerProvider({ children }) {
     });
   }, []);
 
-  const showQueuePopup = () => {
+  const showQueuePopup = (text) => {
+    setPopupMessage(text)
     setQueuePopup(true);
     setTimeout(() => setQueuePopup(false), 1500);
   };
@@ -129,7 +131,9 @@ export function PlayerProvider({ children }) {
         getData,
         queuePopup,
         showQueuePopup,
-        handle_single_play
+        handle_single_play,
+        popupMessage,
+        setPopupMessage
       }}
     >
       {children}
