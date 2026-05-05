@@ -1,113 +1,112 @@
 import { createContext, useEffect, useState, useRef } from "react";
-import {
-  useAudioPlayer,
-  useAudioPlayerStatus,
-  setAudioModeAsync,
-} from "expo-audio";
+import TrackPlayer, {
+  useActiveTrack, // traccia corrente
+  usePlaybackState, // stato play/pausa/stop
+  useProgress,
+  State,
+  RepeatMode, // posizione e durata
+} from "react-native-track-player";
 
 import {
   createPlaylist,
   addSongToPlaylist,
   removeSong,
-  getData
+  getData,
+  deletePlaylist,
 } from "../storage/playlistStorage";
 
 export const PlayerContext = createContext(null);
 
 export function PlayerProvider({ children }) {
-  const [track, setTrack] = useState(null);
+  const track = useActiveTrack();
+  const playbackState = usePlaybackState();
+  const { position, buffered, duration } = useProgress();
   const [playerVisibility, setPlayerVisibility] = useState(false);
   const [trackScreenActive, setTrackScreenActive] = useState(false);
   const [queuePopup, setQueuePopup] = useState(false);
-  const [popupMessage,setPopupMessage] = useState();
-  const queue = useRef([]);
+  const [popupMessage, setPopupMessage] = useState();
+  const [playlists, setPlaylists] = useState([]);
+  const repeatModePrev = useRef(RepeatMode.Off);
+  const [repeatMode, setRepeatMode] = useState(RepeatMode.Off);
+
+  const handleRepeatMode = (newRepeatMode) => {
+    repeatModePrev.current = repeatMode;
+    setRepeatMode(newRepeatMode);
+    TrackPlayer.setRepeatMode(newRepeatMode);
+  };
+
+  useEffect(() => {
+    const numberOfPrefetched = 5;
+    const song_index = TrackPlayer.getActiveTrackIndex();
+    const queue = TrackPlayer.getQueue();
+    const results = queue.slice(
+      song_index - numberOfPrefetched,
+      song_index + numberOfPrefetched,
+    );
+    for (let i = 0; i < results.length; i++) {
+      fetch(results[i].url);
+    }
+  }, [track]);
 
   const BASE_URL = "https://web-production-d23a.up.railway.app";
 
+  const Storage = {
+    createNewPlaylist(name) {
+      createPlaylist(name);
+      setPlaylists(getData().playlists);
+    },
+    addASongToPlaylist(playlistId, song) {
+      addSongToPlaylist(playlistId, song);
+      setPlaylists(getData().playlists);
+    },
+    removeASong(playlistId, songId) {
+      removeSong(playlistId, songId);
+      setPlaylists(getData().playlists);
+    },
+    getPlaylistData() {
+      return getData().playlists;
+    },
+    deleteAPlaylist(playlistId) {
+      deletePlaylist(playlistId);
+      setPlaylists(getData().playlists);
+    },
+  };
+
   useEffect(() => {
-    setAudioModeAsync({
-      playsInSilentMode: true,
-      shouldPlayInBackground: true,
-      interruptionMode: "doNotMix",
-    });
+    setPlaylists(getData().playlists);
   }, []);
 
+  const isRNTPObject = (t) =>
+    t?.id && t?.url && t?.title && t?.artist && t?.duration && t?.artwork;
+
+  const createRNTPobject = (track) => {
+    if (isRNTPObject(track)) {
+      return track;
+    }
+    const RNTPObject = {
+      id: track.id,
+      url: `${BASE_URL}/stream/${track.id}`,
+      title: track.title,
+      artist: track.channel,
+      duration: track.duration,
+      artwork: `https://i.ytimg.com/vi/${track.id}/hqdefault.jpg`,
+    };
+    return RNTPObject;
+  };
+
   const showQueuePopup = (text) => {
-    setPopupMessage(text)
+    setPopupMessage(text);
     setQueuePopup(true);
     setTimeout(() => setQueuePopup(false), 1500);
   };
 
-  const player = useAudioPlayer();
-  const playerStatus = useAudioPlayerStatus(player);
-
-  const addToQueue = (newTrack) => {
-    if (queue.current.length === 0) {
-      setTrack(newTrack);
+  useEffect(() => {
+    if (playbackState.state !== State.None && !trackScreenActive) {
       setPlayerVisibility(true);
-    }
-    queue.current.push(newTrack);
-    fetch(`${BASE_URL}/stream/${newTrack.id}`);
-  };
-
-  const handle_single_play = (newTrack) => {
-    queue.current = [newTrack];
-    setTrack(newTrack);
-  };
-
-  const moveForward = () => {
-    const currentIndex = queue.current.findIndex((t) => t.id === track.id);
-    const nextTrack = queue.current[currentIndex + 1];
-
-    if (nextTrack) {
-      setTrack(nextTrack);
-    }
-  };
-
-  const moveBackward = () => {
-    if (playerStatus.currentTime > 5) {
-      player.seekTo(0);
     } else {
-      const currentIndex = queue.current.findIndex((t) => t.id === track.id);
-      const previousTrack = queue.current[currentIndex - 1];
-
-      if (previousTrack) {
-        setTrack(previousTrack);
-      }
+      setPlayerVisibility(false);
     }
-  };
-
-  useEffect(() => {
-    if (!track) return;
-    player.replace({ uri: `${BASE_URL}/stream/${track.id}` });
-    player.play();
-    setPlayerVisibility(true);
-    player.setActiveForLockScreen(
-      true,
-      {
-        title: track.title,
-        artist: track.channel,
-        albumTitle: "youtube",
-        artworkUrl: `https://i.ytimg.com/vi/${track.id}/hqdefault.jpg`,
-      },
-      {
-        showSeekBackward: true,
-        showSeekForward: true,
-      },
-    );
-  }, [track]);
-
-  useEffect(() => {
-    if (!track) return;
-    if (playerStatus.didJustFinish) {
-      const currentIndex = queue.current.findIndex((t) => t.id === track.id);
-      const nextTrack = queue.current[currentIndex + 1];
-
-      if (nextTrack) {
-        setTrack(nextTrack);
-      }
-    }
-  }, [playerStatus.didJustFinish]);
+  }, [playbackState, trackScreenActive]);
 
   return (
     <PlayerContext.Provider
@@ -115,25 +114,21 @@ export function PlayerProvider({ children }) {
         BASE_URL,
         trackScreenActive,
         setTrackScreenActive,
-        addToQueue,
-        moveForward,
-        moveBackward,
-        handle_single_play,
-        player,
-        playerStatus,
         track,
-        setTrack,
         playerVisibility,
         setPlayerVisibility,
-        createPlaylist,
-        addSongToPlaylist,
-        removeSong,
-        getData,
         queuePopup,
         showQueuePopup,
-        handle_single_play,
         popupMessage,
-        setPopupMessage
+        setPopupMessage,
+        createRNTPobject,
+        playbackState,
+        position,
+        duration,
+        Storage,
+        repeatModePrev,
+        handleRepeatMode,
+        repeatMode,
       }}
     >
       {children}

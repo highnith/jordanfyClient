@@ -5,13 +5,13 @@ import debounce from "lodash.debounce";
 import { PlayerContext } from "../../context/PlayerContext";
 import Song from "..//../components/Song";
 import QueuePopup from "..//../components/QueuePopup";
-import Player from "../../components/Player";
+
 
 
 export function Search() {
   const [value, setValue] = useState("");
-  const [showPopup, setShowPopup] = useState(false);
-  const { handle_single_play, addToQueue, BASE_URL,player , setPlayerVisibility} =
+  const [setShowPopup] = useState(false);
+  const { BASE_URL, createRNTPobject} =
     useContext(PlayerContext);
 
   function useSearch() {
@@ -36,13 +36,11 @@ export function Search() {
   }
   const { results, search } = useSearch();
   
-  const show = () => {
-    setShowPopup(true);
-    setTimeout(() => setShowPopup(false), 1500);
-  };
+  const finresults = Array.isArray(results?.entries)
+  ? results.entries
+  : [];
 
-  let finresults = results.entries || [];
-
+  const finalresults = finresults.map((item) => createRNTPobject(item))
   return (
     <View style={styles.container}>
       
@@ -68,7 +66,7 @@ export function Search() {
       <FlatList
         scrollEnabled={true}
         nestedScrollEnabled={true}
-        data={finresults}
+        data={finalresults}
         keyExtractor={(item, index) => item.id?.toString() || index.toString()}
         renderItem={({ item }) => (
           <Song
@@ -83,7 +81,7 @@ export function Search() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "black",
+    backgroundColor: "#161A16",
     gap: 10,
   },
   popup: {

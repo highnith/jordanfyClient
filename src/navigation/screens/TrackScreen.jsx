@@ -3,11 +3,13 @@ import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, View, Text, Image, Pressable } from "react-native";
 import { PlayerContext } from "../../context/PlayerContext";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import Feather from "@expo/vector-icons/Feather";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import TrackPlayer, { State, RepeatMode } from "react-native-track-player";
 
 import Animated, {
   useSharedValue,
@@ -19,23 +21,28 @@ import Animated, {
 
 export function TrackScreen() {
   const {
-    player,
     playerStatus,
-    trackScreenActive,
     setTrackScreenActive,
     track,
-    moveBackward,
-    moveForward,
-    addSongToPlaylist,
+    playbackState,
+    repeatModePrev,
+    position,
+    duration,
+    handleRepeatMode,
+    repeatMode
   } = useContext(PlayerContext);
   if (!track) return;
 
   const [width, setWidth] = useState(0);
   const [addedToPlaylist, setAddedToPlaylist] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
-  const show = () => {
-    setShowPopup(true);
-    setTimeout(() => setShowPopup(false), 1500);
+
+
+  const handleToggleRepeatMode = () => {
+    if(repeatMode == RepeatMode.Track){
+      handleRepeatMode(repeatModePrev.current)
+    }else{
+      handleRepeatMode(RepeatMode.Track)
+    }
   };
 
   useEffect(() => {
@@ -52,15 +59,15 @@ export function TrackScreen() {
   const progress = useSharedValue(0);
 
   const playTrack = () => {
-    player.play();
+    TrackPlayer.play();
   };
 
   const pauseTrack = () => {
-    player.pause();
+    TrackPlayer.pause();
   };
 
   const seekTrack = (time) => {
-    player.seekTo(time);
+    TrackPlayer.seekTo(time);
   };
 
   const panGesture = Gesture.Pan()
@@ -71,25 +78,27 @@ export function TrackScreen() {
       progress.value = e.x / width;
     })
     .onEnd(() => {
-      runOnJS(seekTrack)(Math.floor(playerStatus.duration * progress.value));
+      runOnJS(seekTrack)(Math.floor(duration * progress.value));
       runOnJS(playTrack)();
     });
 
   useEffect(() => {
-    if (!playerStatus.duration) {
+    if (duration == 0) {
       progress.value = 0;
-      return;
     }
-    if (
-      Math.abs(
-        progress.value - playerStatus.currentTime / playerStatus.duration,
-      ) > 0.05 &&
-      playerStatus.currentTime != 0
-    )
-      return;
-    progress.value = playerStatus.currentTime / playerStatus.duration;
-  }, [playerStatus.currentTime, playerStatus.duration]);
+    progress.value = position / duration;
+  }, [position]);
+  useEffect(() => {
+    progress.value = 0;
+  }, [track]);
 
+  const handleGoBack = () => {
+    if (position > 5) {
+      TrackPlayer.seekTo(0);
+    } else {
+      TrackPlayer.skipToPrevious();
+    }
+  };
   function formatTime(seconds) {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -102,8 +111,10 @@ export function TrackScreen() {
 
   const navigation = useNavigation();
 
-  const addToFavourites = (track) => {
-    addSongToPlaylist("favourites", track);
+  const handleAddToPlaylist = (track) => {
+    navigation.navigate("AddToPlaylist", {
+      song: track,
+    });
   };
 
   return (
@@ -111,11 +122,6 @@ export function TrackScreen() {
       style={styles.container}
       colors={["white", "grey", "#000000"]}
     >
-      {showPopup && (
-              <View style={styles.popup}>
-                <Text style={{ color: "black" }}>Add to favourites</Text>
-              </View>
-            )}
       <Pressable onPress={() => navigation.goBack()}>
         <Feather name="chevron-down" size={34} color="grey" />
       </Pressable>
@@ -144,27 +150,30 @@ export function TrackScreen() {
               fontWeight: "bold",
             }}
           >
-            {track.channel}
+            {track.artist}
           </Text>
         </View>
-        <Pressable
-          style={styles.addPlaylistIcon}
-          onPress={() => {
-            setAddedToPlaylist(true);
-            addToFavourites(track);
-            show();
-          }}
-        >
-          {addedToPlaylist ? (
-            <Ionicons name="checkbox" size={iconsSize} color="#0BDA51" />
-          ) : (
-            <MaterialIcons
-              name="my-library-add"
-              size={iconsSize}
-              color="white"
-            />
-          )}
-        </Pressable>
+        <View style={styles.utilsButtons}>
+          <Pressable onPress={() => handleToggleRepeatMode()}>
+            <FontAwesome6 name="repeat" size={30} color={repeatMode==RepeatMode.Track ?"#0BDA51" : "white"} />
+          </Pressable>
+          <Pressable
+            style={styles.addPlaylistIcon}
+            onPress={() => {
+              handleAddToPlaylist(track);
+            }}
+          >
+            {addedToPlaylist ? (
+              <Ionicons name="checkbox" size={iconsSize} color="#0BDA51" />
+            ) : (
+              <MaterialIcons
+                name="my-library-add"
+                size={iconsSize}
+                color="white"
+              />
+            )}
+          </Pressable>
+        </View>
       </View>
       <GestureDetector gesture={panGesture}>
         <View style={styles.statusBar}>
@@ -188,7 +197,7 @@ export function TrackScreen() {
             width: "50%",
           }}
         >
-          {formatTime(playerStatus.currentTime)}
+          {formatTime(position)}
         </Text>
         <Text
           style={{
@@ -199,27 +208,32 @@ export function TrackScreen() {
             width: "50%",
           }}
         >
-          {formatTime(playerStatus.duration)}
+          {formatTime(duration)}
         </Text>
       </View>
       <View style={styles.controls}>
-        <Pressable style={styles.controlsButton} onPress={() => moveBackward()}>
+        <Pressable style={styles.controlsButton} onPress={() => handleGoBack()}>
           <Ionicons name="play-skip-back" size={iconsSize} color="white" />
         </Pressable>
 
         <Pressable
           style={styles.playButton}
           onPress={() =>
-            playerStatus.playing ? player.pause() : player.play()
+            playbackState.state === State.Playing
+              ? TrackPlayer.pause()
+              : TrackPlayer.play()
           }
         >
-          {player.paused ? (
+          {playbackState.state === State.Paused ? (
             <FontAwesome5 name="play" size={iconsSize} color="white" />
           ) : (
             <FontAwesome5 name="pause" size={iconsSize} color="white" />
           )}
         </Pressable>
-        <Pressable style={styles.controlsButton} onPress={() => moveForward()}>
+        <Pressable
+          style={styles.controlsButton}
+          onPress={() => TrackPlayer.skipToNext()}
+        >
           <Ionicons name="play-skip-forward" size={iconsSize} color="white" />
         </Pressable>
       </View>
@@ -235,6 +249,13 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 5,
   },
+  utilsButtons:{
+     width: "20%",
+     alignItems:"center",
+      gap:15,
+      paddingTop: 8,
+  
+  },
   mid: {
     marginTop: 40,
     flexDirection: "row",
@@ -243,7 +264,7 @@ const styles = StyleSheet.create({
   popup: {
     position: "absolute",
     bottom: 180,
-    left:20,
+    left: 20,
     right: 20,
     alignSelf: "center",
     backgroundColor: "white",
@@ -253,7 +274,6 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   addPlaylistIcon: {
-    width: "20%",
     alignItems: "center",
     justifyContent: "center",
   },

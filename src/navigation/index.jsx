@@ -16,6 +16,8 @@ import { NotFound } from "./screens/NotFound";
 import { Library } from "./screens/Library";
 import {TrackScreen} from "./screens/TrackScreen";
 import {Playlist} from "./screens/Playlist";
+import { NewPlaylist } from "./screens/NewPlaylist";
+import { AddToPlaylist } from "./screens/AddToPlaylist";
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -138,7 +140,19 @@ const RootStack = createNativeStackNavigator({
       options: {
         headerShown: false
       }
-    }
+    },
+    NewPlaylist:{
+      screen : NewPlaylist,
+      options: {
+        headerShown: false
+      }
+    },
+    AddToPlaylist:{
+      screen : AddToPlaylist,
+      options: {
+        headerShown: false
+      }
+    },
   },
 });
 

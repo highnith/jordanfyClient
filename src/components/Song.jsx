@@ -7,12 +7,20 @@ import Animated, {
   useAnimatedStyle,
   runOnJS,
 } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useContext } from "react";
 import { PlayerContext } from "../context/PlayerContext";
+import TrackPlayer,{RepeatMode} from "react-native-track-player";
 
-export default function Song({ item }) {
-  const { addToQueue, showQueuePopup, handle_single_play, removeSong } =
+export default function Song({
+  item,
+  location = "favourites",
+  locationName = "Favourites",
+  parent,
+  handlePlayFrom,
+}) {
+  const { showQueuePopup, createRNTPobject, Storage } =
     useContext(PlayerContext);
   const position = useSharedValue(0);
   const roundBorder = useSharedValue(0);
@@ -20,7 +28,21 @@ export default function Song({ item }) {
   const MAX_SWIPE = 130;
 
   const handleRemoveSong = (track) => {
-    removeSong("favourites", track.id);
+    console.log(location);
+    Storage.removeASong(location, track.id);
+  };
+  const handleAddToQueue = (track) => {
+    TrackPlayer.add([createRNTPobject(track)]);
+  };
+
+  const handleClick = async () => {
+    if (handlePlayFrom != null) {
+      handlePlayFrom(item);
+    } else {
+      await TrackPlayer.reset();
+      await TrackPlayer.add(createRNTPobject(item));
+      await TrackPlayer.play();
+    }
   };
 
   const panGesture = Gesture.Pan()
@@ -48,10 +70,10 @@ export default function Song({ item }) {
     })
     .onEnd((e) => {
       if (e.translationX > THRESHOLD) {
-        runOnJS(addToQueue)(item);
+        runOnJS(handleAddToQueue)(item);
         runOnJS(showQueuePopup)("Added to queue");
       } else if (e.translationX < -THRESHOLD) {
-        runOnJS(showQueuePopup)("Removed from favourites");
+        runOnJS(showQueuePopup)(`removed from ${locationName}`);
         runOnJS(handleRemoveSong)(item);
       }
       roundBorder.value = withSpring(0);
@@ -62,8 +84,8 @@ export default function Song({ item }) {
     transform: [{ translateX: position.value }],
     zIndex: 2,
     overflow: "hidden",
-    backgroundColor: "black",
     borderRadius: roundBorder.value,
+    backgroundColor: "#161A16",
     width: "100%",
   }));
 
@@ -71,10 +93,7 @@ export default function Song({ item }) {
     <GestureDetector gesture={panGesture}>
       <View style={styles.container}>
         <Animated.View style={animatedStyle}>
-          <Pressable
-            style={styles.song}
-            onPress={() => handle_single_play(item)}
-          >
+          <Pressable style={styles.song} onPress={() => handleClick()}>
             <View style={styles.thumbnail}>
               <Image
                 source={{
@@ -96,17 +115,35 @@ export default function Song({ item }) {
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {item.channel}
+                {item.artist}
               </Text>
             </View>
           </Pressable>
         </Animated.View>
-        <View style={{ width: "50%", backgroundColor: "green",position: "absolute", left: 0,zIndex:1,height:"100%"}}>
+        <View
+          style={{
+            width: "50%",
+            backgroundColor: "green",
+            position: "absolute",
+            left: 0,
+            zIndex: 1,
+            height: "100%",
+          }}
+        >
           <View style={styles.queueIconAdd}>
             <MaterialIcons name="queue-music" size={50} color="white" />
           </View>
         </View>
-        <View style={{ width: "50%", backgroundColor: "red" ,position: "absolute",right: 0,zIndex:1,height:"100%"}}>
+        <View
+          style={{
+            width: "50%",
+            backgroundColor: "red",
+            position: "absolute",
+            right: 0,
+            zIndex: 1,
+            height: "100%",
+          }}
+        >
           <View style={styles.queueIconRemove}>
             <MaterialIcons name="delete-forever" size={50} color="white" />
           </View>
@@ -118,23 +155,23 @@ export default function Song({ item }) {
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
-     flexDirection: "row",
+    flexDirection: "row",
 
     width: "100%",
   },
   queueIconAdd: {
-    height:"100%",
+    height: "100%",
     position: "absolute",
     left: 50,
     alignItems: "center",
-    justifyContent:"center"
+    justifyContent: "center",
   },
   queueIconRemove: {
-    height:"100%",
+    height: "100%",
     position: "absolute",
     right: 50,
     alignItems: "center",
-    justifyContent:"center"
+    justifyContent: "center",
   },
   song_image: {
     borderRadius: 13,
@@ -163,7 +200,7 @@ const styles = StyleSheet.create({
   box: { backgroundColor: "green" },
   textContainer: {
     flex: 1,
-    minWidth: 0, // 👈 FONDAMENTALE
+    minWidth: 0, 
     paddingRight: 10,
   },
 });

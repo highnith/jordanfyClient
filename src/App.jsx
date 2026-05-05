@@ -11,6 +11,7 @@ import { navigationRef } from "./components/navigationRef";
 import Player from "./components/Player";
 import { PlayerProvider } from "./context/PlayerContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import TrackPlayer, { Capability,AppKilledPlaybackBehavior } from "react-native-track-player";
 
 Asset.loadAsync([
   ...NavigationAssets,
@@ -24,6 +25,26 @@ const BASE_URL = "http://10.108.59.223:8000";
 const prefix = createURL("/");
 
 export function App() {
+  React.useEffect(() => {
+    const setup = async () => {
+      await TrackPlayer.setupPlayer();
+
+      await TrackPlayer.updateOptions({
+        capabilities: [
+          Capability.Play,
+          Capability.Pause,
+          Capability.SkipToNext,
+          Capability.SkipToPrevious,
+          Capability.Stop,
+        ],
+        android: {
+        appKilledPlaybackBehavior: AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification
+    },
+      });
+    };
+    setup();
+  }, []);
+
   const colorScheme = useColorScheme();
 
   const theme = colorScheme === "dark" ? DarkTheme : DefaultTheme;

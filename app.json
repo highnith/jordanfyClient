@@ -1,19 +1,19 @@
 {
   "expo": {
-    "name": "jordanfy",
+    "name": "jordanfy.dev",
     "slug": "jordanfy",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "default",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/jordanfy_1.0.1.png",
     "userInterfaceStyle": "automatic",
     "scheme": "jordanfy",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.jordanfy"
+      "bundleIdentifier": "com.jordanfy.dev"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/jordanfy_1.0.1.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.jordanfy",
@@ -26,7 +26,7 @@
       ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/jordanfy_1.0.1.svg"
     },
     "plugins": [
       "expo-asset",
@@ -34,7 +34,7 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#ffffff",
-          "image": "./assets/splash-icon.png"
+          "image": "./assets/jordanfy_1.0.1.png"
         }
       ],
       [
@@ -54,7 +54,8 @@
           "enableBackgroundRecording": false
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-build-properties"
     ],
     "extra": {
       "eas": {

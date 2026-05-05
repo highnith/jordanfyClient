@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import Song from "..//../components/Song";
 import QueuePopup from "..//../components/QueuePopup";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import TrackPlayer, {RepeatMode} from "react-native-track-player";
 
 export function Playlist() {
   const navigation = useNavigation();
@@ -14,12 +15,27 @@ export function Playlist() {
 
   const { playlistId } = route.params;
 
-  const { getData } = useContext(PlayerContext);
-  const playlists = getData().playlists;
+  const { Storage, handleRepeatMode } = useContext(PlayerContext);
+  const playlists = Storage.getPlaylistData();
   const playlist = playlists.find((p) => p.id === playlistId);
-  const songs = playlist.songs;
+  const songs = playlist?.songs || [];
+
+  const handlePlayPlaylist = () => {
+    TrackPlayer.setQueue(songs);
+    TrackPlayer.play();
+    handleRepeatMode(RepeatMode.Queue);
+  }
+
+  const handlePlayFrom = (item) => {
+    let index = songs.findIndex(track => track.id == item.id);
+    TrackPlayer.setQueue(songs)
+    TrackPlayer.skip(index);
+    TrackPlayer.play();
+     handleRepeatMode(RepeatMode.Queue);
+  }
+
   return (
-    <LinearGradient style={styles.container} colors={["#355E3B", "#000000"]}>
+    <LinearGradient style={styles.container} colors={["#161A16", "#000000"]}>
       <QueuePopup />
       <View style={styles.header}>
         <Pressable style={styles.backIcon} onPress={() => navigation.goBack()}>
@@ -36,13 +52,31 @@ export function Playlist() {
           {playlist.name}
         </Text>
       </View>
-      <FlatList
-        scrollEnabled={true}
-        nestedScrollEnabled={true}
-        data={songs}
-        keyExtractor={(item, index) => item.id?.toString() || index.toString()}
-        renderItem={({ item }) => <Song item={item} />}
-      />
+      {songs && (
+        <View style={styles.reproducePlaylistView}>
+          <Pressable style={styles.reproducePlaylistButton} onPress={() => handlePlayPlaylist()}>
+            <Text style={styles.reproducePlaylistText}>Reproduce Playlist</Text>
+          </Pressable>
+        </View>
+      )}
+      {songs && (
+        <FlatList
+          scrollEnabled={true}
+          nestedScrollEnabled={true}
+          data={songs}
+          keyExtractor={(item, index) =>
+            item.id?.toString() || index.toString()
+          }
+          renderItem={({ item }) => (
+            <Song
+              item={item}
+              location={playlistId}
+              locationName={playlist.name}
+              handlePlayFrom = {handlePlayFrom}
+            />
+          )}
+        />
+      )}
     </LinearGradient>
   );
 }
@@ -60,4 +94,18 @@ const styles = StyleSheet.create({
     padding: 5,
     marginLeft: 10,
   },
+  reproducePlaylistView:{
+    alignItems: 'flex-start'
+  },
+  reproducePlaylistButton:{
+    padding:16,
+    backgroundColor:"white",
+    borderRadius:20,
+    margin:15
+  },
+  reproducePlaylistText:{
+    fontSize:20,
+    color:"black",
+    fontWeight: "bold"
+  }
 });

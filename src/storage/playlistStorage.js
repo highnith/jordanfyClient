@@ -83,6 +83,16 @@ export const removeSong = (playlistId, songId) => {
   saveData(data);
 };
 
+
+export const deletePlaylist = (playlistId) => {
+  const data = getData();
+
+  data.playlists = data.playlists.filter((p) => p.id !== playlistId);
+
+  saveData(data);
+};
+
+
 export const clearPlaylist = (playlistId) => {
   const data = getData();
 
@@ -95,4 +105,12 @@ export const clearPlaylist = (playlistId) => {
   playlist.songs = [];
 
   saveData(data);
+};
+
+export const sincPlaylists = (playlists) => {
+  const data = {
+    playlists,
+  };
+
+  storage.set(KEY, JSON.stringify(data));
 };
