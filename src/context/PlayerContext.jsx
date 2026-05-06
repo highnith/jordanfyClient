@@ -19,6 +19,11 @@ import {
 
 import { LastFM } from "../components/lastFMAPI";
 
+const PLAYLIST_IMAGES = {
+  world: require("../assets/Top50Global.png"),
+  italy: require("../assets/Top50Italy.png"),
+};
+
 export const PlayerContext = createContext(null);
 
 export function PlayerProvider({ children }) {
@@ -47,17 +52,17 @@ export function PlayerProvider({ children }) {
     const load = async () => {
       const data = await LastFM.getTopTracks();
       const countryTop = await LastFM.getTopTracksbyCountry();
-      setSuggested((prev) => [
+      setSuggested([
         {
           entries: data.tracks.track,
           id: "World Top Tracks",
-          image: require("../assets/Top50Global.png")
+          image: PLAYLIST_IMAGES.world, 
         },
         {
           entries: countryTop.tracks.track,
           id: "Italy Top Tracks",
-          image: require("../assets/Top50Italy.png")
-        }
+          image: PLAYLIST_IMAGES.italy,
+        },
       ]);
     };
 
@@ -65,7 +70,7 @@ export function PlayerProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if(track == undefined) return;
+    if (track == undefined) return;
     LastFM.nowPlaying(track);
     scrobbledRef.current = false;
   }, [track]);
@@ -100,7 +105,6 @@ export function PlayerProvider({ children }) {
 
     prefetch();
   }, [track]);
-  
 
   const Storage = {
     createNewPlaylist(name) {
@@ -123,8 +127,7 @@ export function PlayerProvider({ children }) {
       setPlaylists(getData().playlists);
     },
     getRNTPobjectscache,
-    saveRNTPobjectscache
-
+    saveRNTPobjectscache,
   };
 
   useEffect(() => {
