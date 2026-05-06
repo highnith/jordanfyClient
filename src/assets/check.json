@@ -1,0 +1,34 @@
+{
+  "__x_forwarded_for_ip": null,
+  "_type": "url",
+  "availability": null,
+  "channel": "7clouds Rock",
+  "channel_id": "UCQqEC0LPfvgFCP8ixrCqADA",
+  "channel_is_verified": true,
+  "channel_url": "https://www.youtube.com/channel/UCQqEC0LPfvgFCP8ixrCqADA",
+  "description": "Follow the official 7clouds playlist on Spotify : http://spoti.fi/2SJsUcZ ​   Dominic Fike - Babydoll (Lyrics) ⏬ Download / Stream: ...",
+  "duration": 99,
+  "id": "pTmwTQrY3Ts",
+  "ie_key": "Youtube",
+  "live_status": null,
+  "release_timestamp": null,
+  "thumbnails": [
+    {
+      "height": 202,
+      "url": "https://i.ytimg.com/vi/pTmwTQrY3Ts/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLDH1zVqzpxYPVMylvSitZJ0HDHuJg",
+      "width": 360
+    },
+    {
+      "height": 404,
+      "url": "https://i.ytimg.com/vi/pTmwTQrY3Ts/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLBRCnWcLjAyp2i43pspBO4ibos64w",
+      "width": 720
+    }
+  ],
+  "timestamp": null,
+  "title": "Dominic Fike - Babydoll (Lyrics)",
+  "uploader": "7clouds Rock",
+  "uploader_id": "@7cloudsRock",
+  "uploader_url": "https://www.youtube.com/@7cloudsRock",
+  "url": "https://www.youtube.com/watch?v=pTmwTQrY3Ts",
+  "view_count": 5024664
+}

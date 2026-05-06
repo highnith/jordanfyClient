@@ -53,20 +53,18 @@ export const createPlaylist = (name) => {
 export const addSongToPlaylist = (playlistId, song) => {
   const data = getData();
 
-  const playlist = data.playlists.find(
-    (p) => p.id === playlistId
-  );
-  
+  const playlist = data.playlists.find((p) => p.id === playlistId);
+
   if (!playlist) return;
 
   playlist.songs = playlist.songs || [];
 
   const alreadyExists = playlist.songs.some(
-    (oldSong) => oldSong.id === song.id
+    (oldSong) => oldSong.id === song.id,
   );
 
   if (alreadyExists) return;
-  console.log("ADDED")
+  console.log("ADDED");
   playlist.songs.push(song);
 
   saveData(data);
@@ -83,7 +81,6 @@ export const removeSong = (playlistId, songId) => {
   saveData(data);
 };
 
-
 export const deletePlaylist = (playlistId) => {
   const data = getData();
 
@@ -92,13 +89,10 @@ export const deletePlaylist = (playlistId) => {
   saveData(data);
 };
 
-
 export const clearPlaylist = (playlistId) => {
   const data = getData();
 
-  const playlist = data.playlists.find(
-    p => p.id === playlistId
-  );
+  const playlist = data.playlists.find((p) => p.id === playlistId);
 
   if (!playlist) return;
 
@@ -107,10 +101,41 @@ export const clearPlaylist = (playlistId) => {
   saveData(data);
 };
 
-export const sincPlaylists = (playlists) => {
-  const data = {
-    playlists,
-  };
+export const saveLastFMSession = (key) => {
+  const data = getData();
 
-  storage.set(KEY, JSON.stringify(data));
+  data.lastfm_session = key;
+
+  saveData(data);
+};
+
+export const getLastFMSession = () => {
+  const data = getData();
+  return data.lastfm_session || null;
+};
+
+export const getRNTPobjectscache = () => {
+  return getData()?.objectscache ?? [];
+};
+
+export const saveRNTPobjectscache = (tracks) => {
+  const data = getData();
+
+  if (!data.objectscache) {
+    data.objectscache = [];
+  }
+
+  tracks.forEach((track) => {
+    if (!data.objectscache.some((item) => item.id === track.id)) {
+      data.objectscache.push(track);
+    }
+  });
+
+  const MAX_CACHE = 500;
+
+  if (data.objectscache.length > MAX_CACHE) {
+    data.objectscache = data.objectscache.slice(-MAX_CACHE);
+  }
+  
+  saveData(data);
 };

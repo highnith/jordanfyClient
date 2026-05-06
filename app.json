@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "jordanfy.dev",
+    "name": "jordanfy",
     "slug": "jordanfy",
     "version": "1.0.1",
     "orientation": "default",
@@ -9,7 +9,7 @@
     "scheme": "jordanfy",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.jordanfy.dev"
+      "bundleIdentifier": "com.jordanfy"
     },
     "android": {
       "adaptiveIcon": {

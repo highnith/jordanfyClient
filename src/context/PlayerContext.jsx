@@ -13,7 +13,11 @@ import {
   removeSong,
   getData,
   deletePlaylist,
+  getRNTPobjectscache,
+  saveRNTPobjectscache,
 } from "../storage/playlistStorage";
+
+import { LastFM } from "../components/lastFMAPI";
 
 export const PlayerContext = createContext(null);
 
@@ -28,6 +32,7 @@ export function PlayerProvider({ children }) {
   const [playlists, setPlaylists] = useState([]);
   const repeatModePrev = useRef(RepeatMode.Off);
   const [repeatMode, setRepeatMode] = useState(RepeatMode.Off);
+  const scrobbledRef = useRef(false);
 
   const handleRepeatMode = (newRepeatMode) => {
     repeatModePrev.current = repeatMode;
@@ -35,20 +40,67 @@ export function PlayerProvider({ children }) {
     TrackPlayer.setRepeatMode(newRepeatMode);
   };
 
+  const [suggested, setSuggested] = useState([]);
+
+  const BASE_URL = "https://jordanfy-production.up.railway.app";
   useEffect(() => {
-    const numberOfPrefetched = 5;
-    const song_index = TrackPlayer.getActiveTrackIndex();
-    const queue = TrackPlayer.getQueue();
-    const results = queue.slice(
-      song_index - numberOfPrefetched,
-      song_index + numberOfPrefetched,
-    );
-    for (let i = 0; i < results.length; i++) {
-      fetch(results[i].url);
-    }
+    const load = async () => {
+      const data = await LastFM.getTopTracks();
+      const countryTop = await LastFM.getTopTracksbyCountry();
+      setSuggested((prev) => [
+        {
+          entries: data.tracks.track,
+          id: "World Top Tracks",
+          image: require("../assets/Top50Global.png")
+        },
+        {
+          entries: countryTop.tracks.track,
+          id: "Italy Top Tracks",
+          image: require("../assets/Top50Italy.png")
+        }
+      ]);
+    };
+
+    load();
+  }, []);
+
+  useEffect(() => {
+    if(track == undefined) return;
+    LastFM.nowPlaying(track);
+    scrobbledRef.current = false;
   }, [track]);
 
-  const BASE_URL = "https://web-production-d23a.up.railway.app";
+  useEffect(() => {
+    if (position > duration / 2 && scrobbledRef.current == false) {
+      scrobbledRef.current = true;
+      LastFM.scrobble(track);
+    }
+  }, [position]);
+
+  useEffect(() => {
+    const prefetch = async () => {
+      const numberOfPrefetched = 1;
+
+      const songIndex = await TrackPlayer.getActiveTrackIndex();
+      const queue = (await TrackPlayer.getQueue()) || [];
+
+      if (songIndex == null || !Array.isArray(queue)) return;
+
+      const results = queue.slice(
+        Math.max(0, songIndex - numberOfPrefetched),
+        songIndex + numberOfPrefetched,
+      );
+
+      for (let i = 0; i < results.length; i++) {
+        if (results[i]?.url) {
+          fetch(results[i].url);
+        }
+      }
+    };
+
+    prefetch();
+  }, [track]);
+  
 
   const Storage = {
     createNewPlaylist(name) {
@@ -70,6 +122,9 @@ export function PlayerProvider({ children }) {
       deletePlaylist(playlistId);
       setPlaylists(getData().playlists);
     },
+    getRNTPobjectscache,
+    saveRNTPobjectscache
+
   };
 
   useEffect(() => {
@@ -129,6 +184,7 @@ export function PlayerProvider({ children }) {
         repeatModePrev,
         handleRepeatMode,
         repeatMode,
+        suggested,
       }}
     >
       {children}

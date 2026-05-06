@@ -1,27 +1,44 @@
 import { Text } from "@react-navigation/elements";
-import { StyleSheet, View, FlatList, Pressable } from "react-native";
+import { StyleSheet, View, FlatList, Pressable, Image } from "react-native";
+import { LastFM } from "../../components/lastFMAPI";
+import { useEffect, useState, useContext } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import { PlayerContext } from "../../context/PlayerContext";
+import { useNavigation } from "@react-navigation/native";
 
 export function Home() {
-  let playlists = [{ id: 1, name: "your daily" },{id:2}];
+  const { suggested } = useContext(PlayerContext);
+
+  
+  const navigation = useNavigation();
   return (
-    <View style={styles.container}>
+    <LinearGradient style={styles.container} colors={["#161A16", "#000000"]}>
       <Text style={styles.welcome}>Welcome back Jordan</Text>
       <Text style={styles.intro}>
         Having a good day? Here some playlist you may like
       </Text>
       <FlatList
-        data={playlists} // ← array di dati
+        data={suggested}
         keyExtractor={(item) => item.id}
         numColumns={2}
         columnWrapperStyle={{
-         alignItems: "flex-start",
+          alignItems: "flex-start",
           paddingHorizontal: 10,
         }}
-        renderItem={(
-          { item },
-        ) => <Pressable style={styles.playlist}><Text>{item.name}</Text></Pressable>}
+        renderItem={({ item }) => (
+          <Pressable
+            style={styles.playlist}
+            onPress={() =>
+              navigation.navigate("SuggestedPlaylist", {
+                playlistId: item.id,
+              })
+            }
+          >
+            <Image style={styles.playlistImage} source={item.image} />
+          </Pressable>
+        )}
       />
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -32,6 +49,11 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
     gap: 10,
+  },
+  playlistImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 20,
   },
   welcome: {
     fontSize: 50,
@@ -48,10 +70,10 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   playlist: {
-    flex: 0.5,
-  backgroundColor: "black",
-  margin: 5,
-  height: 120,
-  borderRadius: 10,
+    width: 170,
+    height: 170,
+    margin: 5,
+    height: 120,
+    borderRadius: 10,
   },
 });

@@ -25,25 +25,7 @@ const BASE_URL = "http://10.108.59.223:8000";
 const prefix = createURL("/");
 
 export function App() {
-  React.useEffect(() => {
-    const setup = async () => {
-      await TrackPlayer.setupPlayer();
 
-      await TrackPlayer.updateOptions({
-        capabilities: [
-          Capability.Play,
-          Capability.Pause,
-          Capability.SkipToNext,
-          Capability.SkipToPrevious,
-          Capability.Stop,
-        ],
-        android: {
-        appKilledPlaybackBehavior: AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification
-    },
-      });
-    };
-    setup();
-  }, []);
 
   const colorScheme = useColorScheme();
 

@@ -27,6 +27,7 @@
     "expo-splash-screen": "~55.0.11",
     "expo-system-ui": "~55.0.10",
     "lodash.debounce": "^4.0.8",
+    "md5": "^2.3.0",
     "mux.js": "^6.3.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",

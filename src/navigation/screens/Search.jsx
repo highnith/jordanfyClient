@@ -22,7 +22,7 @@ export function Search() {
           const params = new URLSearchParams({
             q: query,
           });
-
+          if(!query) return;
           const res = await fetch(`${BASE_URL}/search?${params}`);
 
           if (!res.ok) throw new Error(`Errore server: ${res.status}`);
