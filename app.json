@@ -29,7 +29,15 @@
       "favicon": "./assets/jordanfy_1.0.1.svg"
     },
     "plugins": [
-      "expo-asset",
+      [
+        "expo-asset",
+        {
+          "assets": [
+            "./src/assets/Top50Global.png",
+            "./src/assets/Top50Italy.png"
+          ]
+        }
+      ],
       [
         "expo-splash-screen",
         {
