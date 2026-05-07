@@ -44,36 +44,33 @@ export function Home() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "green",
     paddingTop: 50,
     padding: 10,
     flex: 1,
     gap: 10,
   },
   playlistImage: {
-    width: "100%",
-    height: "100%",
+    width: 170,    
+    height: 120,   
     borderRadius: 20,
   },
   welcome: {
     fontSize: 50,
     color: "white",
-    fontWeight: 800,
+    fontWeight: "800",  
     fontStyle: "italic",
     margin: 10,
   },
   intro: {
     fontSize: 25,
     color: "white",
-    fontWeight: 800,
-    fontFamily: "",
+    fontWeight: "800",  
     margin: 10,
   },
   playlist: {
     width: 170,
-    height: 170,
+    height: 120,   
     margin: 5,
-    height: 120,
     borderRadius: 10,
   },
 });
