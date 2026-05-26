@@ -11,7 +11,7 @@ import { scheduleOnRN } from "react-native-worklets";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useContext } from "react";
 import { PlayerContext } from "../context/PlayerContext";
-import TrackPlayer,{RepeatMode} from "react-native-track-player";
+import TrackPlayer,{RepeatMode} from '@rntp/player';
 
 export default function Song({
   item,
@@ -39,8 +39,9 @@ export default function Song({
     if (handlePlayFrom != null) {
       handlePlayFrom(item);
     } else {
-      await TrackPlayer.setMediaItem(createRNTPobject(item));
-      await TrackPlayer.play();
+      TrackPlayer.setMediaItem(createRNTPobject(item));
+      console.log(item.id)
+      TrackPlayer.play();
     }
   };
 

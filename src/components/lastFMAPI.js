@@ -1,4 +1,7 @@
-import { saveLastFMSession, getLastFMSession } from "../storage/playlistStorage";
+import {
+  saveLastFMSession,
+  getLastFMSession,
+} from "../storage/playlistStorage";
 import md5 from "md5";
 
 const linkLastFM = "https://www.last.fm/api/accounts";
@@ -21,7 +24,7 @@ const createSignature = (params) => {
 };
 
 const login = async (username, password) => {
-  if(getLastFMSession() != null) return   getLastFMSession();
+  if (getLastFMSession() != null) return getLastFMSession();
   const params = {
     method: "auth.getMobileSession",
     username,
@@ -50,14 +53,14 @@ const login = async (username, password) => {
   const key = data?.session?.key;
 
   if (!key) throw new Error("Login failed");
-  
-  saveLastFMSession(key)
+
+  saveLastFMSession(key);
 
   return key;
 };
 
 const nowPlaying = async (track) => {
-  const SESSION_KEY = await login("Jordanfy", "Gsmnppib2007!")
+  const SESSION_KEY = await login("Jordanfy", "Gsmnppib2007!");
 
   const params = {
     method: "track.updateNowPlaying",
@@ -87,7 +90,7 @@ const nowPlaying = async (track) => {
 };
 
 const scrobble = async (track) => {
-  const SESSION_KEY = await login("Jordanfy", "Gsmnppib2007!")
+  const SESSION_KEY = await login("Jordanfy", "Gsmnppib2007!");
 
   const timestamp = Math.floor(Date.now() / 1000);
 
@@ -135,7 +138,6 @@ const getTopTracks = async (limit = 50) => {
   return data;
 };
 
-
 const getTopTracksbyCountry = async (limit = 50) => {
   const params = new URLSearchParams({
     method: "geo.gettoptracks",
@@ -153,8 +155,8 @@ const getTopTracksbyCountry = async (limit = 50) => {
 };
 
 export const LastFM = {
-    scrobble,
-    nowPlaying,
-    getTopTracks,
-    getTopTracksbyCountry
-}
+  scrobble,
+  nowPlaying,
+  getTopTracks,
+  getTopTracksbyCountry,
+};

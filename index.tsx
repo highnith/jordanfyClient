@@ -1,6 +1,6 @@
 import "@expo/metro-runtime"; // Necessary for Fast Refresh on Web
 import { registerRootComponent } from "expo";
-import TrackPlayer, { Event, PlayerCommand } from "@rntp/player";
+import TrackPlayer, { Event, PlayerCommand, } from "@rntp/player";
 
 import { App } from "./src/App";
 
@@ -26,6 +26,7 @@ const setup = async () => {
       }
     }
   });
+  
   TrackPlayer.setupPlayer({
     contentType: "music",
   });

@@ -29,7 +29,8 @@ export function TrackScreen() {
     position,
     duration,
     handleRepeatMode,
-    repeatMode
+    repeatMode,
+    isPlaying
   } = useContext(PlayerContext);
   if (!track) return;
 
@@ -219,12 +220,12 @@ export function TrackScreen() {
         <Pressable
           style={styles.playButton}
           onPress={() =>
-            playbackState.state === State.Playing
+            isPlaying
               ? TrackPlayer.pause()
               : TrackPlayer.play()
           }
         >
-          {playbackState.state === State.Paused ? (
+          {!isPlaying ? (
             <FontAwesome5 name="play" size={iconsSize} color="white" />
           ) : (
             <FontAwesome5 name="pause" size={iconsSize} color="white" />

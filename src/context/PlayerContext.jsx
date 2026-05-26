@@ -3,7 +3,8 @@ import TrackPlayer, {
   useActiveMediaItem, 
   usePlaybackState, 
   useProgress,
-  State,
+  useIsPlaying,
+  PlaybackState,
   RepeatMode
 } from '@rntp/player';
 
@@ -35,6 +36,8 @@ export function PlayerProvider({ children }) {
   const repeatModePrev = useRef(RepeatMode.Off);
   const [repeatMode, setRepeatMode] = useState(RepeatMode.Off);
   const scrobbledRef = useRef(false);
+  const isPlaying = useIsPlaying();
+  
 
   const handleRepeatMode = (newRepeatMode) => {
     repeatModePrev.current = repeatMode;
@@ -53,12 +56,12 @@ export function PlayerProvider({ children }) {
         {
           entries: data.tracks.track,
           id: "World Top Tracks",
-          image: PLAYLIST_IMAGES.world, 
+          
         },
         {
           entries: countryTop.tracks.track,
           id: "Italy Top Tracks",
-          image: PLAYLIST_IMAGES.italy,
+          
         },
       ]);
     };
@@ -132,7 +135,7 @@ export function PlayerProvider({ children }) {
   }, []);
 
   const isRNTPObject = (t) =>
-    t?.id && t?.url && t?.title && t?.artist && t?.duration && t?.artwork;
+    t?.id && t?.url && t?.title && t?.artist && t?.duration && t?.artworkUrl;
 
   const createRNTPobject = (track) => {
     if (isRNTPObject(track)) {
@@ -144,7 +147,7 @@ export function PlayerProvider({ children }) {
       title: track.title,
       artist: track.channel,
       duration: track.duration,
-      artwork: `https://i.ytimg.com/vi/${track.id}/hqdefault.jpg`,
+      artworkUrl: `https://i.ytimg.com/vi/${track.id}/hqdefault.jpg`,
     };
     return RNTPObject;
   };
@@ -156,12 +159,12 @@ export function PlayerProvider({ children }) {
   };
 
   useEffect(() => {
-    if (playbackState.state !== State.Idle && !trackScreenActive) {
+    if (track && !trackScreenActive) {
       setPlayerVisibility(true);
     } else {
       setPlayerVisibility(false);
     }
-  }, [playbackState, trackScreenActive]);
+  }, [track, trackScreenActive]);
 
   return (
     <PlayerContext.Provider
@@ -185,6 +188,7 @@ export function PlayerProvider({ children }) {
         handleRepeatMode,
         repeatMode,
         suggested,
+        isPlaying
       }}
     >
       {children}

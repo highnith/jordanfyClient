@@ -5,7 +5,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { navigate } from "./navigationRef";
 import { LinearGradient } from "expo-linear-gradient";
-import TrackPlayer, { State,} from '@rntp/player';
+import TrackPlayer from '@rntp/player';
 
 export default function Player() {
   const {
@@ -13,8 +13,10 @@ export default function Player() {
     playerVisibility,
     setPlayerVisibility,
     playbackState,
+    isPlaying,
     track
   } = useContext(PlayerContext);
+  
   if (!track) return null;
   if (!playerVisibility || trackScreenActive ) return null;
   return (
@@ -25,8 +27,8 @@ export default function Player() {
         <Text style={styles.subtitle}>{track.artist}</Text>
       </Pressable>
       <View style={styles.controls}>
-        <Pressable style={styles.playButton} onPress={() => (playbackState.state === State.Playing? TrackPlayer.pause() : TrackPlayer.play())}>
-          {playbackState.state === State.Paused? <FontAwesome5 name="play" size={24} color="white" /> : <FontAwesome5 name="pause" size={24} color="white" />}
+        <Pressable style={styles.playButton} onPress={() => (!isPlaying? TrackPlayer.pause() : TrackPlayer.play())}>
+          {isPlaying? <FontAwesome5 name="play" size={24} color="white" /> : <FontAwesome5 name="pause" size={24} color="white" />}
         </Pressable><Pressable style={styles.playButton} onPress={() => TrackPlayer.skipToNext()}>
           <MaterialIcons name="skip-next" size={40} color="white" />
         </Pressable>

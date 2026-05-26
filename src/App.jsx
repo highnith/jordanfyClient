@@ -4,13 +4,14 @@ import { Asset } from "expo-asset";
 import { createURL } from "expo-linking";
 import * as SplashScreen from "expo-splash-screen";
 import * as React from "react";
-import { useColorScheme } from "react-native";
+import { useColorScheme} from "react-native";
 import { Navigation } from "./navigation";
 import { navigationRef } from "./components/navigationRef";
 
 import Player from "./components/Player";
 import { PlayerProvider } from "./context/PlayerContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 
 
 Asset.loadAsync([
