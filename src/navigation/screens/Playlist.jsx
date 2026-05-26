@@ -27,7 +27,7 @@ export function Playlist() {
   }
 
   const handlePlayFrom = (item) => {
-    let index = songs.findIndex(track => track.id == item.id);
+    let index = songs.findIndex(track => track.mediaId == item.mediaId);
     TrackPlayer.setMediaItems(songs)
     TrackPlayer.skipToIndex(index);
     TrackPlayer.play();

@@ -40,7 +40,12 @@ export function TrackScreen() {
 
   const handleToggleRepeatMode = () => {
     if(repeatMode == RepeatMode.One){
-      handleRepeatMode(repeatModePrev.current)
+      if(TrackPlayer.getQueue().length>1){
+        handleRepeatMode(RepeatMode.All)
+      }else{
+        handleRepeatMode(RepeatMode.Off)
+      }
+      
     }else{
       handleRepeatMode(RepeatMode.One)
     }
@@ -101,6 +106,9 @@ export function TrackScreen() {
     }
   };
   function formatTime(seconds) {
+    if(seconds <  0){
+      return "0:00"
+    }
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
 
@@ -129,7 +137,7 @@ export function TrackScreen() {
 
       <Image
         style={styles.cover}
-        source={{ uri: `https://i.ytimg.com/vi/${track.id}/hqdefault.jpg` }}
+        source={{ uri: `https://i.ytimg.com/vi/${track.mediaId}/hqdefault.jpg` }}
       />
       <View style={styles.mid}>
         <View style={styles.info}>
@@ -156,7 +164,7 @@ export function TrackScreen() {
         </View>
         <View style={styles.utilsButtons}>
           <Pressable onPress={() => handleToggleRepeatMode()}>
-            <FontAwesome6 name="repeat" size={30} color={repeatMode==RepeatMode.Track ?"#0BDA51" : "white"} />
+            <FontAwesome6 name="repeat" size={30} color={repeatMode==RepeatMode.One ?"#0BDA51" : "white"} />
           </Pressable>
           <Pressable
             style={styles.addPlaylistIcon}

@@ -16,6 +16,7 @@ import {
   deletePlaylist,
   getRNTPobjectscache,
   saveRNTPobjectscache,
+  update_server_url
 } from "../storage/playlistStorage";
 
 import { LastFM } from "../components/lastFMAPI";
@@ -37,8 +38,22 @@ export function PlayerProvider({ children }) {
   const [repeatMode, setRepeatMode] = useState(RepeatMode.Off);
   const scrobbledRef = useRef(false);
   const isPlaying = useIsPlaying();
+  const [BASE_URL,SET_BASE_URL] = useState()
   
-
+  useEffect(() => {
+    if(BASE_URL){
+      update_server_url(BASE_URL)
+    }
+  
+  },[BASE_URL]);
+  useEffect(() => {
+    const data = getData();
+    if(data.server_url){
+      SET_BASE_URL(data.server_url)
+    }else{
+      SET_BASE_URL("https://jordanfy-production.up.railway.app")
+    }
+  })
   const handleRepeatMode = (newRepeatMode) => {
     repeatModePrev.current = repeatMode;
     setRepeatMode(newRepeatMode);
@@ -47,7 +62,7 @@ export function PlayerProvider({ children }) {
 
   const [suggested, setSuggested] = useState([]);
 
-  const BASE_URL = "https://jordanfy-production.up.railway.app";
+  
   useEffect(() => {
     const load = async () => {
       const data = await LastFM.getTopTracks();
@@ -56,12 +71,12 @@ export function PlayerProvider({ children }) {
         {
           entries: data.tracks.track,
           id: "World Top Tracks",
-          
+          image: require("../assets/Top50Global.png")
         },
         {
           entries: countryTop.tracks.track,
           id: "Italy Top Tracks",
-          
+          image: require("../assets/Top50Italy.png")
         },
       ]);
     };
@@ -135,14 +150,14 @@ export function PlayerProvider({ children }) {
   }, []);
 
   const isRNTPObject = (t) =>
-    t?.id && t?.url && t?.title && t?.artist && t?.duration && t?.artworkUrl;
+    t?.mediaId && t?.url && t?.title && t?.artist && t?.duration && t?.artworkUrl;
 
   const createRNTPobject = (track) => {
     if (isRNTPObject(track)) {
       return track;
     }
     const RNTPObject = {
-      id: track.id,
+      mediaId: track.id,
       url: `${BASE_URL}/stream/${track.id}`,
       title: track.title,
       artist: track.channel,
@@ -188,7 +203,8 @@ export function PlayerProvider({ children }) {
         handleRepeatMode,
         repeatMode,
         suggested,
-        isPlaying
+        isPlaying,
+        SET_BASE_URL
       }}
     >
       {children}

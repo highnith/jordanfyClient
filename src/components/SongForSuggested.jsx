@@ -29,8 +29,7 @@ export default function SongForSuggested({
 
   const handleRemoveSong = (track) => {
     const song = createRNTPobject(search(track.name))
-    console.log(location);
-    Storage.removeASong(location, song.id);
+    Storage.removeASong(location, song.mediaId);
   };
   const handleAddToQueue = async (track) => {
     const song = createRNTPobject(search(track.name))
@@ -116,7 +115,7 @@ export default function SongForSuggested({
             <View style={styles.thumbnail}>
               <Image
                 source={{
-                  uri: `https://i.ytimg.com/vi/aGSKrC7dGcY/hqdefault.jpg`,
+                  uri: `https://i.ytimg.com/vi/${item.mediaId}/hqdefault.jpg`,
                 }}
                 style={styles.song_image}
               />

@@ -28,8 +28,8 @@ export default function Song({
   const MAX_SWIPE = 130;
 
   const handleRemoveSong = (track) => {
-    console.log(location);
-    Storage.removeASong(location, track.id);
+    Storage.removeASong(location, track.mediaId);
+
   };
   const handleAddToQueue = (track) => {
     TrackPlayer.addMediaItem([createRNTPobject(track)]);
@@ -40,7 +40,6 @@ export default function Song({
       handlePlayFrom(item);
     } else {
       TrackPlayer.setMediaItem(createRNTPobject(item));
-      console.log(item.id)
       TrackPlayer.play();
     }
   };
@@ -97,7 +96,7 @@ export default function Song({
             <View style={styles.thumbnail}>
               <Image
                 source={{
-                  uri: `https://i.ytimg.com/vi/${item.id}/hqdefault.jpg`,
+                  uri: `https://i.ytimg.com/vi/${item.mediaId}/hqdefault.jpg`,
                 }}
                 style={styles.song_image}
               />

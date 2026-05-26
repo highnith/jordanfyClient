@@ -21,14 +21,14 @@ export default function Player() {
   if (!playerVisibility || trackScreenActive ) return null;
   return (
     <LinearGradient colors={[ "#006400", "green"]} style={styles.playerContainer}>
-      <Image style={styles.cover} source={{ uri: `https://i.ytimg.com/vi/${track.id}/hqdefault.jpg` }} />
+      <Image style={styles.cover} source={{ uri: `https://i.ytimg.com/vi/${track.mediaId}/hqdefault.jpg` }} />
       <Pressable style={styles.info} onPress={() => navigate("TrackScreen")}>
         <Text style={styles.title}>{track.title}</Text>
         <Text style={styles.subtitle}>{track.artist}</Text>
       </Pressable>
       <View style={styles.controls}>
-        <Pressable style={styles.playButton} onPress={() => (!isPlaying? TrackPlayer.pause() : TrackPlayer.play())}>
-          {isPlaying? <FontAwesome5 name="play" size={24} color="white" /> : <FontAwesome5 name="pause" size={24} color="white" />}
+        <Pressable style={styles.playButton} onPress={() => (isPlaying? TrackPlayer.pause() : TrackPlayer.play())}>
+          {!isPlaying? <FontAwesome5 name="play" size={24} color="white" /> : <FontAwesome5 name="pause" size={24} color="white" />}
         </Pressable><Pressable style={styles.playButton} onPress={() => TrackPlayer.skipToNext()}>
           <MaterialIcons name="skip-next" size={40} color="white" />
         </Pressable>

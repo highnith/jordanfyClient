@@ -34,6 +34,11 @@ export const saveData = (data) => {
   storage.set(KEY, JSON.stringify(data));
 };
 
+export const update_server_url = (server_url) => {
+  const data = getData();
+  data.server_url = server_url;
+  saveData(data)
+}
 export const createPlaylist = (name) => {
   const data = getData();
 
@@ -60,7 +65,7 @@ export const addSongToPlaylist = (playlistId, song) => {
   playlist.songs = playlist.songs || [];
 
   const alreadyExists = playlist.songs.some(
-    (oldSong) => oldSong.id === song.id,
+    (oldSong) => oldSong.mediaId === song.mediaId,
   );
 
   if (alreadyExists) return;
@@ -76,8 +81,7 @@ export const removeSong = (playlistId, songId) => {
   const playlist = data.playlists.find((p) => p.id === playlistId);
   if (!playlist) return;
 
-  playlist.songs = playlist.songs.filter((s) => s.id !== songId);
-
+  playlist.songs = playlist.songs.filter((s) => s.mediaId !== songId);
   saveData(data);
 };
 
@@ -126,7 +130,7 @@ export const saveRNTPobjectscache = (tracks) => {
   }
 
   tracks.forEach((track) => {
-    if (!data.objectscache.some((item) => item.id === track.id)) {
+    if (!data.objectscache.some((item) => item.mediaId === track.mediaId)) {
       data.objectscache.push(track);
     }
   });

@@ -5,6 +5,7 @@ import { useEffect, useState, useContext } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { PlayerContext } from "../../context/PlayerContext";
 import { useNavigation } from "@react-navigation/native";
+import Feather from '@expo/vector-icons/Feather';
 
 export function Home() {
   const { suggested } = useContext(PlayerContext);
@@ -13,6 +14,11 @@ export function Home() {
   const navigation = useNavigation();
   return (
     <LinearGradient style={styles.container} colors={["#161A16", "#000000"]}>
+      <Pressable style={styles.menu} onPress={() =>
+              navigation.navigate("Settings")
+            }>
+        <Feather name="menu" size={24} color="white" />
+      </Pressable>
       <Text style={styles.welcome}>Welcome back Jordan</Text>
       <Text style={styles.intro}>
         Having a good day? Here some playlist you may like
@@ -34,6 +40,7 @@ export function Home() {
               })
             }
           >
+          <Image style={styles.playlistImage} source={item.image} />
 
           </Pressable>
         )}
@@ -66,6 +73,9 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: "white",
     fontWeight: "800",  
+    margin: 10,
+  },
+  menu: {
     margin: 10,
   },
   playlist: {
