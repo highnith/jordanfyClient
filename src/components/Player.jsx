@@ -5,7 +5,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { navigate } from "./navigationRef";
 import { LinearGradient } from "expo-linear-gradient";
-import TrackPlayer, { State,} from "react-native-track-player";
+import TrackPlayer, { State,} from '@rntp/player';
 
 export default function Player() {
   const {

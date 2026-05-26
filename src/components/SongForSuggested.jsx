@@ -11,7 +11,7 @@ import { scheduleOnRN } from "react-native-worklets";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useContext } from "react";
 import { PlayerContext } from "../context/PlayerContext";
-import TrackPlayer,{RepeatMode} from "react-native-track-player";
+import TrackPlayer,{RepeatMode} from "'@rntp/player'";
 
 export default function SongForSuggested({
   item,
@@ -34,7 +34,7 @@ export default function SongForSuggested({
   };
   const handleAddToQueue = async (track) => {
     const song = createRNTPobject(search(track.name))
-    TrackPlayer.add([createRNTPobject(song)]);
+    TrackPlayer.addMediaItem([createRNTPobject(song)]);
   };
 
   const search = async (query) => {
@@ -59,7 +59,7 @@ export default function SongForSuggested({
       handlePlayFrom(item);
     } else {
       await TrackPlayer.reset();
-      await TrackPlayer.add(createRNTPobject(song));
+      await TrackPlayer.setMediaItem(createRNTPobject(song));
       await TrackPlayer.play();
     }
   };

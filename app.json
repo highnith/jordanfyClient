@@ -30,15 +30,6 @@
     },
     "plugins": [
       [
-        "expo-asset",
-        {
-          "assets": [
-            "./src/assets/Top50Global.png",
-            "./src/assets/Top50Italy.png"
-          ]
-        }
-      ],
-      [
         "expo-splash-screen",
         {
           "backgroundColor": "#ffffff",

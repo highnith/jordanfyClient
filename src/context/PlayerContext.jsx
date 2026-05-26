@@ -1,11 +1,11 @@
 import { createContext, useEffect, useState, useRef } from "react";
 import TrackPlayer, {
-  useActiveTrack, // traccia corrente
-  usePlaybackState, // stato play/pausa/stop
+  useActiveMediaItem, 
+  usePlaybackState, 
   useProgress,
   State,
-  RepeatMode, // posizione e durata
-} from "react-native-track-player";
+  RepeatMode
+} from '@rntp/player';
 
 import {
   createPlaylist,
@@ -19,15 +19,12 @@ import {
 
 import { LastFM } from "../components/lastFMAPI";
 
-const PLAYLIST_IMAGES = {
-  world: require("../assets/Top50Global.png"),
-  italy: require("../assets/Top50Italy.png"),
-};
+
 
 export const PlayerContext = createContext(null);
 
 export function PlayerProvider({ children }) {
-  const track = useActiveTrack();
+  const track = useActiveMediaItem();
   const playbackState = usePlaybackState();
   const { position, buffered, duration } = useProgress();
   const [playerVisibility, setPlayerVisibility] = useState(false);
@@ -86,8 +83,8 @@ export function PlayerProvider({ children }) {
     const prefetch = async () => {
       const numberOfPrefetched = 1;
 
-      const songIndex = await TrackPlayer.getActiveTrackIndex();
-      const queue = (await TrackPlayer.getQueue()) || [];
+      const songIndex = TrackPlayer.getActiveMediaItemIndex();
+      const queue = (TrackPlayer.getQueue()) || [];
 
       if (songIndex == null || !Array.isArray(queue)) return;
 
@@ -159,7 +156,7 @@ export function PlayerProvider({ children }) {
   };
 
   useEffect(() => {
-    if (playbackState.state !== State.None && !trackScreenActive) {
+    if (playbackState.state !== State.Idle && !trackScreenActive) {
       setPlayerVisibility(true);
     } else {
       setPlayerVisibility(false);

@@ -9,7 +9,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import Feather from "@expo/vector-icons/Feather";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import TrackPlayer, { State, RepeatMode } from "react-native-track-player";
+import TrackPlayer, { State, RepeatMode } from '@rntp/player';
 
 import Animated, {
   useSharedValue,
@@ -38,10 +38,10 @@ export function TrackScreen() {
 
 
   const handleToggleRepeatMode = () => {
-    if(repeatMode == RepeatMode.Track){
+    if(repeatMode == RepeatMode.One){
       handleRepeatMode(repeatModePrev.current)
     }else{
-      handleRepeatMode(RepeatMode.Track)
+      handleRepeatMode(RepeatMode.One)
     }
   };
 

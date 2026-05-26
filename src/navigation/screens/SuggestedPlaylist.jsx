@@ -7,7 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import Song from "..//../components/Song";
 import QueuePopup from "..//../components/QueuePopup";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import TrackPlayer, { RepeatMode } from "react-native-track-player";
+import TrackPlayer, { RepeatMode } from '@rntp/player';
 
 export function SuggestedPlaylist() {
   const navigation = useNavigation();
@@ -84,17 +84,17 @@ export function SuggestedPlaylist() {
 }, []);
 
   const handlePlayPlaylist = () => {
-    TrackPlayer.setQueue(songs);
+    TrackPlayer.setMediaItems(songs);
     TrackPlayer.play();
-    handleRepeatMode(RepeatMode.Queue);
+    handleRepeatMode(RepeatMode.All);
   };
 
   const handlePlayFrom = (item) => {
     let index = songs.findIndex((track) => track.id == item.id);
-    TrackPlayer.setQueue(songs);
-    TrackPlayer.skip(index);
+    TrackPlayer.setMediaItems(songs);
+    TrackPlayer.skipToIndex(index);
     TrackPlayer.play();
-    handleRepeatMode(RepeatMode.Queue);
+    handleRepeatMode(RepeatMode.All);
   };
 
   return (

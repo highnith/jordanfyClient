@@ -34,7 +34,7 @@ export function Home() {
               })
             }
           >
-            <Image style={styles.playlistImage} source={item.image} />
+
           </Pressable>
         )}
       />
@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     width: 170,    
     height: 120,   
     borderRadius: 20,
+    backgroundColor:"grey",
   },
   welcome: {
     fontSize: 50,

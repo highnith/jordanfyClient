@@ -11,7 +11,7 @@ import { navigationRef } from "./components/navigationRef";
 import Player from "./components/Player";
 import { PlayerProvider } from "./context/PlayerContext";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import TrackPlayer, { Capability,AppKilledPlaybackBehavior } from "react-native-track-player";
+
 
 Asset.loadAsync([
   ...NavigationAssets,

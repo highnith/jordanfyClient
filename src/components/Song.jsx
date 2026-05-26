@@ -32,15 +32,14 @@ export default function Song({
     Storage.removeASong(location, track.id);
   };
   const handleAddToQueue = (track) => {
-    TrackPlayer.add([createRNTPobject(track)]);
+    TrackPlayer.addMediaItem([createRNTPobject(track)]);
   };
 
   const handleClick = async () => {
     if (handlePlayFrom != null) {
       handlePlayFrom(item);
     } else {
-      await TrackPlayer.reset();
-      await TrackPlayer.add(createRNTPobject(item));
+      await TrackPlayer.setMediaItem(createRNTPobject(item));
       await TrackPlayer.play();
     }
   };
