@@ -59,7 +59,7 @@ export function PlayerProvider({ children }) {
     }else{
       SET_BASE_URL("https://jordanfy-production.up.railway.app")
     }
-  })
+  },[])
   const handleRepeatMode = (newRepeatMode) => {
     repeatModePrev.current = repeatMode;
     setRepeatMode(newRepeatMode);
