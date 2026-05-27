@@ -76,7 +76,7 @@ export function PlayerProvider({ children }) {
         {
           entries: countryTop.tracks.track,
           id: "Italy Top Tracks",
-          image: require("../assets/Top50Italy.png")
+          image: require("../assets/Top50Italia.png")
         },
       ]);
     };
