@@ -25,6 +25,12 @@ import { LastFM } from "../components/lastFMAPI";
 
 export const PlayerContext = createContext(null);
 
+const PLAYLIST_IMAGES = {
+  world: require("../assets/Top50Global.png"),
+  italia: require("../assets/Top50Italia.png")
+}
+
+
 export function PlayerProvider({ children }) {
   const track = useActiveMediaItem();
   const playbackState = usePlaybackState();
@@ -71,12 +77,12 @@ export function PlayerProvider({ children }) {
         {
           entries: data.tracks.track,
           id: "World Top Tracks",
-          image: require("../assets/Top50Global.png")
+          image:PLAYLIST_IMAGES.world
         },
         {
           entries: countryTop.tracks.track,
           id: "Italy Top Tracks",
-          image: require("../assets/Top50Italia.png")
+          image: PLAYLIST_IMAGES.italia
         },
       ]);
     };

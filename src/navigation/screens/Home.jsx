@@ -7,6 +7,7 @@ import { PlayerContext } from "../../context/PlayerContext";
 import { useNavigation } from "@react-navigation/native";
 import Feather from '@expo/vector-icons/Feather';
 
+
 export function Home() {
   const { suggested } = useContext(PlayerContext);
 
