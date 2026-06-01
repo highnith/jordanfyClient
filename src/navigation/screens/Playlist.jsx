@@ -23,7 +23,7 @@ export function Playlist() {
   const handlePlayPlaylist = () => {
     TrackPlayer.setMediaItems(songs);
     TrackPlayer.play();
-    handleRepeatMode(RepeatMode.Queue);
+    handleRepeatMode(RepeatMode.All);
   }
 
   const handlePlayFrom = (item) => {

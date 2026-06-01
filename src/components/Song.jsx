@@ -32,7 +32,7 @@ export default function Song({
 
   };
   const handleAddToQueue = (track) => {
-    TrackPlayer.addMediaItem([createRNTPobject(track)]);
+    TrackPlayer.addMediaItem(createRNTPobject(track));
   };
 
   const handleClick = async () => {

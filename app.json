@@ -6,6 +6,7 @@
     "orientation": "default",
     "icon": "./assets/jordanfy_1.0.1.png",
     "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": ["**/*"],
     "scheme": "jordanfy.dev",
     "ios": {
       "supportsTablet": true,

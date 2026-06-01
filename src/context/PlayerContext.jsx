@@ -21,7 +21,7 @@ import {
 
 import { LastFM } from "../components/lastFMAPI";
 
-
+import { useAssets } from 'expo-asset';
 
 export const PlayerContext = createContext(null);
 
@@ -29,6 +29,7 @@ const PLAYLIST_IMAGES = {
   world: require("../assets/Top50Global.png"),
   italia: require("../assets/Top50Italia.png")
 }
+
 
 
 export function PlayerProvider({ children }) {
@@ -46,6 +47,7 @@ export function PlayerProvider({ children }) {
   const isPlaying = useIsPlaying();
   const [BASE_URL,SET_BASE_URL] = useState()
   
+
   useEffect(() => {
     if(BASE_URL){
       update_server_url(BASE_URL)
