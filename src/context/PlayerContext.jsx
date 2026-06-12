@@ -47,6 +47,10 @@ export function PlayerProvider({ children }) {
   const isPlaying = useIsPlaying();
   const [BASE_URL,SET_BASE_URL] = useState()
   
+const [assets, error] = useAssets([
+    require("../assets/Top50Global.png"),
+    require("../assets/Top50Italia.png")
+  ]);
 
   useEffect(() => {
     if(BASE_URL){
@@ -79,18 +83,18 @@ export function PlayerProvider({ children }) {
         {
           entries: data.tracks.track,
           id: "World Top Tracks",
-          image:PLAYLIST_IMAGES.world
+          image:assets[0]
         },
         {
           entries: countryTop.tracks.track,
           id: "Italy Top Tracks",
-          image: PLAYLIST_IMAGES.italia
+          image: assets[1]
         },
       ]);
     };
 
     load();
-  }, []);
+  }, [assets]);
 
   useEffect(() => {
     if (track == undefined) return;

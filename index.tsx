@@ -29,6 +29,7 @@ const setup = async () => {
   
   TrackPlayer.setupPlayer({
     contentType: "music",
+    taskRemovedBehavior: "stop"
   });
   TrackPlayer.setCommands({
     capabilities: [

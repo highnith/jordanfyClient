@@ -58,31 +58,29 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   playlistImage: {
-    width: 170,    
-    height: 120,   
+    width: "100%",
+    height: "100%",
     borderRadius: 20,
-    backgroundColor:"grey",
   },
   welcome: {
     fontSize: 50,
     color: "white",
-    fontWeight: "800",  
+    fontWeight: 800,
     fontStyle: "italic",
     margin: 10,
   },
   intro: {
     fontSize: 25,
     color: "white",
-    fontWeight: "800",  
-    margin: 10,
-  },
-  menu: {
+    fontWeight: 800,
+    fontFamily: "",
     margin: 10,
   },
   playlist: {
     width: 170,
-    height: 120,   
+    height: 170,
     margin: 5,
+    height: 120,
     borderRadius: 10,
   },
 });
