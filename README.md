@@ -1,65 +1,51 @@
-# Starter Template with React Navigation
+# Jordanfy Client
 
-This is a minimal starter template for React Native apps using Expo and React Navigation.
+App mobile per la ricerca e l'ascolto di musica, sviluppata in **React Native** con **Expo**. È il client del progetto [JordanfyServer](https://github.com/highnith/JordanfyServer), il backend Python/FastAPI che gestisce ricerca, download e streaming audio.
 
-It includes the following:
+## Funzionalità
 
-- Example [Native Stack](https://reactnavigation.org/docs/native-stack-navigator) with a nested [Bottom Tab](https://reactnavigation.org/docs/bottom-tab-navigator)
-- Web support with [React Native for Web](https://necolas.github.io/react-native-web/)
-- TypeScript support and configured for React Navigation
-- Automatic [deep link](https://reactnavigation.org/docs/deep-linking) and [URL handling configuration](https://reactnavigation.org/docs/configuring-links)
-- Theme support [based on system appearance](https://reactnavigation.org/docs/themes/#using-the-operating-system-preferences)
-- Expo [Development Build](https://docs.expo.dev/develop/development-builds/introduction/) with [Continuous Native Generation](https://docs.expo.dev/workflow/continuous-native-generation/)
+- **Ricerca canzoni**: ricerca brani tramite il backend Jordanfy e visualizzazione dei risultati
+- **Riproduzione**: streaming diretto dei brani selezionati
+- **Playlist**: creazione e gestione di playlist personali
+- **Salvataggio locale**: le playlist possono essere salvate direttamente sul telefono, per essere consultate anche senza dover rieffettuare la ricerca
 
-## Getting Started
+## Stack tecnico
 
-1. Create a new project using this template:
+- [React Native](https://reactnative.dev/)
+- [Expo](https://expo.dev/)
+- Backend: [JordanfyServer](https://github.com/highnith/JordanfyServer) (Python, FastAPI)
 
-   ```sh
-   npx create-expo-app@latest --template react-navigation/template
-   ```
+## Requisiti
 
-2. Edit the `app.json` file to configure the `name`, `slug`, `scheme` and bundle identifiers (`ios.bundleIdentifier` and `android.bundleIdentifier`) for your app.
+- [Node.js](https://nodejs.org/) (LTS consigliata)
+- [Expo CLI](https://docs.expo.dev/get-started/installation/) (`npm install -g expo-cli`, oppure uso diretto tramite `npx`)
+- App **Expo Go** sul telefono (per testare su dispositivo fisico), oppure un emulatore Android/iOS
+- Un'istanza attiva di [JordanfyServer](https://github.com/highnith/JordanfyServer) raggiungibile dal client
 
-3. Edit the `src/App.tsx` file to start working on your app.
 
-## Running the app
 
-- Install the dependencies:
+## Struttura del progetto
 
-  ```sh
-  npm install
-  ```
+```
+jordanfyClient/
+├── app/                # Schermate principali (ricerca, playlist, player)
+├── components/         # Componenti riutilizzabili dell'interfaccia
+├── assets/             # Icone e risorse statiche
+└── app.json            # Configurazione Expo
+```
 
-- Start the development server:
+> La struttura sopra è indicativa: aggiornala in base all'organizzazione reale delle cartelle del progetto.
 
-  ```sh
-  npm start
-  ```
+## Backend richiesto
 
-- Build and run iOS and Android development builds:
+L'app necessita di un'istanza attiva di **JordanfyServer** per funzionare: la ricerca, il download e lo streaming dei brani avvengono tramite chiamate REST al backend. Vedi il [repository del server](https://github.com/highnith/JordanfyServer) per le istruzioni di avvio.
 
-  ```sh
-  npm run ios
-  # or
-  npm run android
-  ```
+## Roadmap / possibili sviluppi futuri
 
-- In the terminal running the development server, press `i` to open the iOS simulator, `a` to open the Android device or emulator, or `w` to open the web browser.
+- [ ] Sincronizzazione playlist su più dispositivi
+- [ ] Modalità offline per i brani scaricati
+- [ ] Miglioramenti UI/UX
 
-## Notes
+## Licenza
 
-This project uses a [development build](https://docs.expo.dev/develop/development-builds/introduction/) and cannot be run with [Expo Go](https://expo.dev/go). To run the app with Expo Go, edit the `package.json` file, remove the `expo-dev-client` package and `--dev-client` flag from the `start` script.
-
-We highly recommend using the development builds for normal development and testing.
-
-The `ios` and `android` folder are gitignored in the project by default as they are automatically generated during the build process ([Continuous Native Generation](https://docs.expo.dev/workflow/continuous-native-generation/)). This means that you should not edit these folders directly and use [config plugins](https://docs.expo.dev/config-plugins/) instead. However, if you need to edit these folders, you can remove them from the `.gitignore` file so that they are tracked by git.
-
-## Resources
-
-- [React Navigation documentation](https://reactnavigation.org/)
-- [Expo documentation](https://docs.expo.dev/)
-
----
-
-Demo assets are from [lucide.dev](https://lucide.dev/)
+Progetto personale a scopo di apprendimento.
